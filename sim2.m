@@ -15,7 +15,7 @@ global maxx maxy;
 
 % Parameters
 apptype = 'crosslayer_searching';    % or 'dht_searching'
-log_file = 'log_mobility_crosslayer_';
+log_file = 'result/log_mobility_crosslayer_';
 n = 10;
 maxx = 100;
 maxy = 100;

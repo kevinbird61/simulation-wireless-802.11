@@ -13,7 +13,7 @@ global rrep_out_crosslayer rrep_in_crosslayer rrep_forward_crosslayer rrep_desti
 
 % Parameters
 apptype = 'crosslayer_searching';    % or 'dht_searching'
-log_file = 'log_crosslayer_';
+log_file = 'result/log_crosslayer_';
 max_time = 100;
 ntopo = 2;
 nsize = 2;

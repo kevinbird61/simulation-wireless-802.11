@@ -3,7 +3,7 @@
 z=1.960;    % 95% confidence interval % z=2.576;    % 99% confidence interval
 z2 = 0.5;  % confidence interval mark length
 
-log_file = 'log_crosslayer_';
+log_file = 'result/log_crosslayer_';
 ntopo = 2;
 nsize = 2;
 itraffic = 5;
