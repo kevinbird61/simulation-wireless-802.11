@@ -36,3 +36,6 @@ simulation of wireless 802.11 in MATLAB.
         * ad-hoc routing
     * APP
         * overlay routing protocols
+        
+# Discuss Note
+- [Dropbox Paper record](https://paper.dropbox.com/doc/Project-2-802.11-sJdS2RZ4Fjm5k5XJGfTik)
