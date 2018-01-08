@@ -12,6 +12,12 @@ simulation of wireless 802.11 in MATLAB.
 * branch `master`,`matlab (for additional program usage.)` is worked on `MATLAB R2016a`.
     * Without any bugs.
 
+* generate document page by papoGen
+    * need to install `node.js` first!
+    * available on `linux`/`macOS`.
+```sh
+cd docs/ && make
+```
 
 ## Functionality
 
