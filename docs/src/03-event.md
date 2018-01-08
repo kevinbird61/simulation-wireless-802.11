@@ -117,7 +117,7 @@ And then checkout this node's MAC queue ->
                 * just decrease by 1
         * or == 0
             * `true`:
-                * start a new backoff counter, which ***more larger than*** current one! (You can see more in contention window part → PHY)
+                * start a new backoff counter, which ***more larger than*** current one! (You can see more in contention window part → MAC Layer)
         * If not > 1, or == 0 (not match with above case)
             * then schedule `wait_for_channel` event after time `t + cca_time` for this node
 
