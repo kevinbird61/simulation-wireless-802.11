@@ -55,6 +55,57 @@
 <li>Written by <a href="https://github.com/kevinbird61"><code>Kevin Cyu</code></a></li>
 </ul>
 </p></div><div class="content" id="content2"><p><h2>Radio Propagation</h2>
+<p>Edit: <code>Kevin Cyu</code></p>
+<hr>
+<p>This part introduce <code>3 model</code> on power delivery:</p>
+<ul>
+<li>free space propagation</li>
+<li>two-ray ground reflection model</li>
+<li>lognormal shadowing model</li>
+</ul>
+<h3>Free Space</h3>
+<ul>
+<li>transmit/receive antenna <strong>without any influence of the earth surface</strong> , so called “free space”</li>
+<li>Equation: <code>w = pT * Gt/ (4 * p * d^2).</code>, is the power which this transmitter can provide.
+<ul>
+<li>d: antenna coverage range</li>
+<li>pT : power ( transmitter )</li>
+<li>Gt : antenna gain</li>
+<li>4 p d2 : coverage area size</li>
+</ul>
+</li>
+<li>This equation represent an <code>sphere</code>, where transmitter is in the <code>center</code>, and the <code>radius</code> is <code>d</code>
+<ul>
+<li><code>4 p d^2</code> is the area which the power delivery by transmitter can reach.</li>
+</ul>
+</li>
+</ul>
+<h4>Path Loss Theorem</h4>
+<ul>
+<li>When distance of propagation increase, the radiated <code>energy</code> will decrease, so called <code>path loss</code>
+<ul>
+<li>power and <code>d^2</code> is inversely(成反比).</li>
+</ul>
+</li>
+</ul>
+<pre><code>P' = P - 20*log(d'/d)
+</code></pre>
+<h3>Two-ray ground reflection model</h3>
+<ul>
+<li>A more realistic model compare to <code>free space</code></li>
+<li>Not only calculate the transmission of node to node, also consider the <code>reflection</code> of from the earth.</li>
+<li>In this model, the result in <code>short-distance</code> is worse because the <strong>oscillation combination from constructive and destructive ray</strong>.</li>
+</ul>
+<h3>Lognormal shadowing model</h3>
+<ul>
+<li>The above 2 model are all in the ideal case in <code>cycle</code>.</li>
+<li>Practically, received power will be an <code>random variable</code> which based on <code>multi-path propagation</code> in the specific distance, a.k.a <code>fading effects</code>
+<ul>
+<li>Need to consider: <code>path loss model</code>, <code>variation of received power(in specific distance)</code></li>
+</ul>
+</li>
+<li><code>shadowing model</code> extends the ideal circle model to a sophisticated model, a more realistic model.</li>
+</ul>
 </p></div><div class="content" id="content3"><p><h2>Mobility</h2>
 </p></div><div class="content" id="content4"><p><h2>Physical Layer</h2>
 </p></div><div class="content" id="content5"><p><h2>Network Routing Protocol</h2>
