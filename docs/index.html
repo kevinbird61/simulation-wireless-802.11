@@ -1,32 +1,50 @@
-<!-- "doc" type, with tabs usage as template--><!-- Author: Kevin Cyu--><!-- include mixins--><!-- mixin - list--><!-- main--><!DOCTYPE html><html><!-- include header--><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Project 2</title><link rel="stylesheet" href="./asset/highlight.min.css"/><link rel="stylesheet" href="./asset/paper.min.css"/><link rel="stylesheet" href="./asset/monokai.css"/><link rel="stylesheet" href="./asset/main.css"/><link rel="stylesheet" href="./asset/cn-font.css"/><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script src="./asset/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body><div class="container"><div class="paper"><div class="demo-title" id="top"><div class="row flex-center"><div class="text-center"> <h1>Project 2</h1></div></div></div><div class="section"><div class="flex-spaces tabs">
+<!-- "doc" type, with tabs usage as template--><!-- Author: Kevin Cyu--><!-- include mixins--><!-- mixin - list--><!-- main--><!DOCTYPE html><html><!-- include header--><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Project 2</title><link rel="stylesheet" href="./asset/highlight.min.css"/><link rel="stylesheet" href="./asset/paper.min.css"/><link rel="stylesheet" href="./asset/monokai.css"/><link rel="stylesheet" href="./asset/main.css"/><link rel="stylesheet" href="./asset/cn-font.css"/><style>.tabs input[id=tab6]:checked~div[id=content6]{display:block}</style><style>.tabs input[id=tab7]:checked~div[id=content7]{display:block}</style><style>.tabs input[id=tab8]:checked~div[id=content8]{display:block}</style><style>.tabs input[id=tab9]:checked~div[id=content9]{display:block}</style><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script src="./asset/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body><div class="container"><div class="paper"><div class="demo-title" id="top"><div class="row flex-center"><div class="text-center"> <h1>Project 2</h1></div></div></div><div class="section"><div class="flex-spaces tabs">
 <input id="tab1" type="radio" name="tabs" checked/>
 <label for="tab1">01-Intro</label>
 
 <input id="tab2" type="radio" name="tabs"/>
-<label for="tab2">02-source-code-tracing</label>
+<label for="tab2">02-1-Radio</label>
 
 <input id="tab3" type="radio" name="tabs"/>
-<label for="tab3">03-event</label>
+<label for="tab3">02-2-Mobility</label>
 
-<div class="content" id="content1"><p><h1>Introduction</h1>
+<input id="tab4" type="radio" name="tabs"/>
+<label for="tab4">02-3-PHY</label>
+
+<input id="tab5" type="radio" name="tabs"/>
+<label for="tab5">02-4-NET</label>
+
+<input id="tab6" type="radio" name="tabs"/>
+<label for="tab6">02-5-APP</label>
+
+<input id="tab7" type="radio" name="tabs"/>
+<label for="tab7">02-6-MAC</label>
+
+<input id="tab8" type="radio" name="tabs"/>
+<label for="tab8">02-source-code-tracing</label>
+
+<input id="tab9" type="radio" name="tabs"/>
+<label for="tab9">03-event</label>
+
+<div class="content" id="content1"><p><h2>Introduction</h2>
 <p>Project 2 is aim to anaylze the source code of 802.11 mechanism. Using MATLAB source code to illustrate how does it work.</p>
 <p>Obviously, the work can be divided into several part:</p>
 <ol>
-<li>Power consumption
+<li>Power consumption (Radio Propagation, Mobility, PHY)
 <ul>
 <li>transmition rate</li>
 <li>transmition power</li>
 <li>distance</li>
 </ul>
 </li>
-<li>Interference among nodes
+<li>Interference among nodes (NET, APP)
 <ul>
 <li>overlay</li>
 </ul>
 </li>
-<li>Internal receiving mechanism in each node.
+<li>Internal receiving mechanism in each node. (MAC)
 <ul>
-<li>content window mechanism</li>
+<li>contention window mechanism</li>
 <li>re-transmit mechanism</li>
 </ul>
 </li>
@@ -36,6 +54,12 @@
 <li>This project is used for NCKU network simulation course, use for education only.</li>
 <li>Written by <a href="https://github.com/kevinbird61"><code>Kevin Cyu</code></a></li>
 </ul>
-</p></div><div class="content" id="content2"><p><h1>Tracing the code</h1>
-</p></div><div class="content" id="content3"><p><h1>Event</h1>
+</p></div><div class="content" id="content2"><p><h2>Radio Propagation</h2>
+</p></div><div class="content" id="content3"><p><h2>Mobility</h2>
+</p></div><div class="content" id="content4"><p><h2>Physical Layer</h2>
+</p></div><div class="content" id="content5"><p><h2>Network Routing Protocol</h2>
+</p></div><div class="content" id="content6"><p><h2>Overlay</h2>
+</p></div><div class="content" id="content7"><p><h2>MAC Layer</h2>
+</p></div><div class="content" id="content8"><p><h1>Tracing the code</h1>
+</p></div><div class="content" id="content9"><p><h1>Event</h1>
 </p></div></div></div><div class="row flex-right"><p>Created by <span class="badge secondary">@ToolBuddy/@papercss</span></p></div></div></div></body></html>
