@@ -2,4 +2,4 @@
 
 ### Workflow - sim1.m
 
-![](../../gliffy/sim1.png)
+![](../gliffy/sim1.png)
