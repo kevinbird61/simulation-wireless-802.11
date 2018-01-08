@@ -18,3 +18,5 @@ Obviously, the work can be divided into several part:
 
 * This project is used for NCKU network simulation course, use for education only.
 * Written by [`Kevin Cyu`](https://github.com/kevinbird61)
+    * `Nuntanut Bhooanusas`
+    * `JingZhao Zhuo`

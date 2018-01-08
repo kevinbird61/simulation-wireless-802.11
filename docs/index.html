@@ -52,7 +52,12 @@
 <h2>Note</h2>
 <ul>
 <li>This project is used for NCKU network simulation course, use for education only.</li>
-<li>Written by <a href="https://github.com/kevinbird61"><code>Kevin Cyu</code></a></li>
+<li>Written by <a href="https://github.com/kevinbird61"><code>Kevin Cyu</code></a>
+<ul>
+<li><code>Nuntanut Bhooanusas</code></li>
+<li><code>JingZhao Zhuo</code></li>
+</ul>
+</li>
 </ul>
 </p></div><div class="content" id="content2"><p><h2>Radio Propagation</h2>
 <p>Edit: <code>Kevin Cyu</code></p>
@@ -107,6 +112,29 @@
 <li><code>shadowing model</code> extends the ideal circle model to a sophisticated model, a more realistic model.</li>
 </ul>
 </p></div><div class="content" id="content3"><p><h2>Mobility</h2>
+<h3>Random waypoint model</h3>
+<p>Random model for the movement of mobile users, and how their <code>location</code>, <code>velocity</code> and <code>acceleration</code> <strong>change</strong> over time.</p>
+<p>So this part is going to simulate the status of movement of the mobile user randomly!</p>
+<ul>
+<li>Why this model is most popular <code>mobility model</code> for <strong>mobile ad-hoc network(MANET)</strong> routing protocol?
+<ul>
+<li>simplicity</li>
+<li>wide availability</li>
+</ul>
+</li>
+</ul>
+<p>=&gt;
+each <code>mobile node</code> in this random mobility simulation model is <code>independent</code>, and all using a <code>random</code> way to move (without any constraint); Also, its <code>destination</code>, <code>speed</code>, <code>direction</code> all using choose randomly.</p>
+<p>=&gt;
+In each simulation routine (i.e. tick), will let each node choose randomly on <code>destination</code>, <code>speed</code> again, until simulation clock end.</p>
+<ul>
+<li>Have two variation:
+<ul>
+<li>random walk model</li>
+<li>random direction model</li>
+</ul>
+</li>
+</ul>
 </p></div><div class="content" id="content4"><p><h2>Physical Layer</h2>
 </p></div><div class="content" id="content5"><p><h2>Network Routing Protocol</h2>
 </p></div><div class="content" id="content6"><p><h2>Overlay</h2>
@@ -118,7 +146,68 @@
 <p>listing all event types in simulation.</p>
 <h3>Sim1</h3>
 <ul>
-<li>send_mac</li>
+<li>send_phy</li>
+</ul>
+<p><img src="./res/sim1-send_phy.png" alt=""></p>
+<ul>
+<li>
+<p>send_phy_finish</p>
+</li>
+<li>
+<p>send_mac</p>
+</li>
 </ul>
 <p><img src="./res/sim1-send_mac.png" alt=""></p>
+<ul>
+<li>recv_mac</li>
+</ul>
+<p><img src="./res/sim1-recv_mac.png" alt=""></p>
+<ul>
+<li>recv_phy</li>
+</ul>
+<p><img src="./res/sim1-recv_phy.png" alt=""></p>
+<ul>
+<li>wait_for_channel</li>
+</ul>
+<p><img src="./res/sim1-wait.png" alt=""></p>
+<ul>
+<li>backoff</li>
+</ul>
+<p><img src="./res/sim1-bo.png" alt=""></p>
+<ul>
+<li>backoff_start</li>
+</ul>
+<p><img src="./res/sim1-bos.png" alt=""></p>
+<ul>
+<li>timeout_rts</li>
+</ul>
+<p><img src="./res/sim1-timeout-rts.png" alt=""></p>
+<ul>
+<li>timeout_data</li>
+</ul>
+<p><img src="./res/sim1-timeout-data.png" alt=""></p>
+<ul>
+<li>timeout_rreq</li>
+</ul>
+<p><img src="./res/sim1-timeout-rreq.png" alt=""></p>
+<ul>
+<li>send_net</li>
+</ul>
+<p><img src="./res/sim1-send_net.png" alt=""></p>
+<ul>
+<li>send_net2</li>
+</ul>
+<p><img src="./res/sim1-send_net2.png" alt=""></p>
+<ul>
+<li>recv_net</li>
+</ul>
+<p><img src="./res/sim1-recv_net.png" alt=""></p>
+<ul>
+<li>send_app</li>
+</ul>
+<p><img src="./res/sim1-send_app.png" alt=""></p>
+<ul>
+<li>recv_app</li>
+</ul>
+<p><img src="./res/sim1-recv_app.png" alt=""></p>
 </p></div></div></div><div class="row flex-right"><p>Created by <span class="badge secondary">@ToolBuddy/@papercss</span></p></div></div></div></body></html>
