@@ -1,5 +1,9 @@
 ## Mobility
 
+Edit: `Kevin Cyu`
+
+---
+
 ### Random waypoint model
 
 Random model for the movement of mobile users, and how their `location`, `velocity` and `acceleration` **change** over time.
