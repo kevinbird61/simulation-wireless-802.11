@@ -214,19 +214,57 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 <p><img src="./res/sim1_success_rate.png" alt=""></p>
 <h3>Workflow - sim2.m</h3>
 </p></div><div class="content" id="content9"><p><h2>Event</h2>
-<p>listing all event types in simulation.</p>
+<p>Listing all event types in simulation.</p>
 <h3>Sim1</h3>
 <ul>
 <li>send_phy</li>
 </ul>
+<p>When current event's node is idle &amp; <code>nav</code> is not busy -&gt; will using this node as <code>transmitter</code></p>
+<p>And then set up the other nodes as <code>receiver</code>: (2 mode)</p>
+<ol>
+<li><strong>broadcast</strong>
+<ul>
+<li>broadcast from this transmitter</li>
+<li>impact all idle node (using <code>overlay</code> meachanism to identify), and those nodes will schedule a <code>recv_phy</code> event for each one of them.</li>
+</ul>
+</li>
+<li><strong>unicast</strong>
+<ul>
+<li>This part will illustrate <code>unicast</code> from <em>event.node</em> to <em>event.pkt.rv</em></li>
+<li>First set <code>event.pkt.rv</code> to receiver mode</li>
+<li>Then set number of <code>n</code> nodes into <code>receiver mode</code></li>
+</ul>
+</li>
+</ol>
+<p>After all setting above, setup the transmitter's finish event: <code>send_phy_finish</code> ( in <code>t+txtime+eps</code> later, which <code>t+txtime</code> is <code>recv_phy</code> event )</p>
+<p>Check <code>event.pkt.type</code>:</p>
+<ul>
+<li>= <code>rts</code>:
+<ul>
+<li>set timeout timer for RTS</li>
+<li>schedule event <code>timeout_rts</code> after <code>t + (txtime + SIFS + cts_tx_time)*2</code></li>
+<li>And record this node as pending id (waiting mode)</li>
+</ul>
+</li>
+<li>= <code>data</code> &amp; (<code>event.pkt.rv</code> != 0):
+<ul>
+<li>set timeout for DATA</li>
+<li>schedule event <code>timeout_data</code> after <code>t + (txtime + SIFS + ack_tx_time)*2</code></li>
+</ul>
+</li>
+</ul>
+<p>Node not <code>idle</code> or <code>nav</code> is block</p>
+<ul>
+<li>-&gt; schedule <code>wait_for_channel</code> after <code>t + cca_time</code></li>
+<li>push it into <em>waiting queue</em></li>
+</ul>
 <p><img src="./res/sim1-send_phy.png" alt=""></p>
 <ul>
-<li>
-<p>send_phy_finish</p>
-</li>
-<li>
-<p>send_mac</p>
-</li>
+<li>send_phy_finish</li>
+</ul>
+<p><img src="./res/sim1-send_phy_finish.png" alt=""></p>
+<ul>
+<li>send_mac</li>
 </ul>
 <p><img src="./res/sim1-send_mac.png" alt=""></p>
 <ul>
