@@ -169,8 +169,85 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 <p>Another thing , a transmission power , is to save energy of devices and battery life. It also affect the transmission rate. For example, when the distance of piers is small, <code>the power level will be reduced and the data rate will increase to the highest possibility such that the packet can reach the destination</code>.</p>
 <p>Both the transmission power and the transmission rate is necessary for a service requirement since they can be related to packet errors during broadcasting. The further information is provided in [1].</p>
 <p>[1] http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.404.5870&amp;rep=rep1&amp;type=pdf</p>
-</p></div><div class="content" id="content5"><p><h2>Network Routing Protocol</h2>
-</p></div><div class="content" id="content6"><p><h2>Overlay</h2>
+</p></div><div class="content" id="content5"><p><h2>Ad-hoc routing</h2>
+<p>Edit: <code>Taku</code></p>
+<hr>
+<h3>Goal</h3>
+<ul>
+<li>Communication between wireless node without fixed infrastructure.</li>
+<li>No external setup (self-configuring)</li>
+<li>Often need multiple hops to reach dst</li>
+</ul>
+<h3>Structure</h3>
+<ul>
+<li>No fixed infrastructure, no prior planning and layout, but rely on self-communication between members, anytime, anywhere organization</li>
+<li>Can send data by Unicast or Multicast(可以利用单播或群播来传输资料)</li>
+</ul>
+<h3>Routing</h3>
+<ul>
+<li>
+<p>Route path is important(尋找路由路徑的過程，稱為路由探索 (Route discovery)。</p>
+</li>
+<li>
+<p>在路由探索的過程中，節點利用廣播 (Broadcast) 路由請求 (Route request, RREQ) 來獲得路由路徑。</p>
+</li>
+<li>
+<p>當一節點打算送出封包，但其路由的表格中並沒有 到該目的節點的資訊時，則該節點會啟動路由探索 (Route discovery) 程序，來找尋到目的地節點的路由 路徑。</p>
+<ul>
+<li>由來源節點先發出路由請求 (Route request, RREQ) 封包以 啟動路由探索程序，當某一中繼節點收到RREQ封包時， 它首先會判斷是否廣播過該RREQ封包，如果是，則丟棄 此RREQ封包；如果沒有，則會更新此RREQ封包內部的 資訊，並且繼續廣播此RREQ封包。</li>
+<li>當此RREQ封包被送到目的地節點或是某一中繼節點的路 由緩衝中含有目的地節點的資訊時，該含有資訊的節點會 回覆一路由回應 (Route Reply, RREP) 封包返回到啟動路 由探索程序的來源節點。</li>
+<li>RREP利用來源路由的策略來傳送，即RREP封包中包含有 回送路徑中各個中繼節點的資訊，這些資訊記錄在封包的 表頭中，而RREP封包會依照著這些資訊送回來源節點， 當來源節點收到RREP封包後，則開始傳送資料封包。</li>
+<li>當連結發生失敗時(發送封包到下一中繼節點失敗)，則會 產生路由錯誤 (Route Error, RERR) 封包，送回並告知來源 節點，沿途的節點會把該路由資訊清除，而當來源節點收 到RERR之後，會重新啟動路由探索程序來尋找新的路徑 以替代原本的路徑。</li>
+</ul>
+</li>
+<li>
+<p>節點散佈的區域廣泛，廣播的訊息需要一些中繼節點重播(Rebroadcast)，才能使所有節點得知，但因節點位置可能改變，造成多次重播，進而出現廣播風暴問題。</p>
+</li>
+<li>
+<p>Power issue: related to the complexity of routing path</p>
+</li>
+<li>
+<p>主動式路由協定 (pro-active routing protocol)</p>
+<ul>
+<li>主動式路由方法先為網路中任意的兩節點建立路由資訊 ，因此當有新連線要建立時 (來源節點傳送封包到目的節 點)，便能夠及時得到路由資訊，將封包送到目的地。考 慮到無線隨意網路頻寬有限且移動性高，需要將原本應 用在網際網路 (Internet) 上的路由方法做一些變化來適應 。目前專為無線網路設計的主動式路由協議，大致分為 距離向量法 (Distance vector) 與鏈結狀態 (Link state) 兩類 路由方法。</li>
+<li>距離向量法是由相鄰的節點互相交換彼此的距離向量，經過持續的交換之後，此向量會記錄自己到網 路中所有節點的距離，將資訊散播到整個網路中， 由此來計算出自己到整個網路中所有節點的最佳路由方法。</li>
+<li>節點會選擇一條總成本 (經過路徑的所有成本總和)最低的路徑，用來把資料從來源節點送到目的節點</li>
+</ul>
+</li>
+</ul>
+</p></div><div class="content" id="content6"><p><h2>Overlay routing protocols</h2>
+<p>Edit: <code>Taku</code></p>
+<h3>Define:What is an overlay network?</h3>
+<ul>
+<li>A network defined over another set of networks</li>
+<li>The overlay addresses its own nodes</li>
+<li>Links on one layer are network segments of lower
+layers
+<ul>
+<li>Requires lower layer routing to be utilized</li>
+</ul>
+</li>
+<li>Overlaying mechanism is called tunneling</li>
+<li>Example: Virtual Private Networks(VPN)</li>
+</ul>
+<h3>Routing on the overlay</h3>
+<p><img src="./res/R1.PNG" alt="Figure R1"></p>
+<ul>
+<li>The underlying network induces a complete graph of connectivity(No routing required!)
+<ul>
+<li>One virtual hop may be many underlying hops away.</li>
+<li>Latency and cost vary significantly over the virtual links</li>
+<li>State information may grow with E(n^2)</li>
+</ul>
+</li>
+</ul>
+<p><img src="./res/R2.PNG" alt="Figure R2"></p>
+<ul>
+<li>Overlay network users may not be directly connected to the overlay nodes</li>
+<li>User must be redirected to a “close by” overlay node</li>
+</ul>
+<p>For more detail:
+http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.pdf</p>
 </p></div><div class="content" id="content7"><p><h2>MAC Layer</h2>
 <p>Edit: <code>Nuntanut Bhooanusas(Chuanjie Fu)</code></p>
 <hr>
@@ -216,9 +293,7 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 </p></div><div class="content" id="content9"><p><h2>Event</h2>
 <p>Listing all event types in simulation.</p>
 <h3>Sim1</h3>
-<ul>
-<li>send_phy</li>
-</ul>
+<h4>send_phy</h4>
 <p>When current event's node is idle &amp; <code>nav</code> is not busy -&gt; will using this node as <code>transmitter</code></p>
 <p>And then set up the other nodes as <code>receiver</code>: (2 mode)</p>
 <ol>
@@ -259,64 +334,200 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 <li>push it into <em>waiting queue</em></li>
 </ul>
 <p><img src="./res/sim1-send_phy.png" alt=""></p>
+<h4>send_phy_finish</h4>
+<p>Set node back into <code>idle</code> mode.</p>
+<p>And then checkout this node's MAC queue -&gt;</p>
 <ul>
-<li>send_phy_finish</li>
+<li>if <strong>empty</strong>, then <code>reset</code> the <em>MAC status</em></li>
+<li>if <strong>non-empty</strong>, then pop out current element, and schedule <code>wait_for_channel</code> after <code>t + cca_time</code>
+<ul>
+<li>Make it prepare to use the radio resource!</li>
+</ul>
+</li>
 </ul>
 <p><img src="./res/sim1-send_phy_finish.png" alt=""></p>
+<h4>send_mac</h4>
 <ul>
-<li>send_mac</li>
+<li>set <code>event.pkt.type</code> as <code>data</code></li>
+<li><code>event.pkt.nav</code> equal to <code>SIFS + cts_tx_time + SIFS + tx_time(event.pkt) + SIFS + ack_tx_time</code></li>
+<li>if <code>event.pkt.rv</code> != 0 (i.e. <em>unicast</em>)
+<ul>
+<li>then set <code>event.pkt.type</code> as <code>rts</code></li>
+</ul>
+</li>
+<li>if this node is free, but still have packets waiting in MAC queue:
+<ul>
+<li>then <em>report error</em></li>
+</ul>
+</li>
+<li>if MAC queue <code>empty</code>, and MAC status = 1
+<ul>
+<li>true, then push event(i.e. packet) into MAC queue</li>
+<li>false, means node is busy, then schedule <code>wait_for_channel</code> event after time <code>t + cca_time</code></li>
+</ul>
+</li>
 </ul>
 <p><img src="./res/sim1-send_mac.png" alt=""></p>
-<ul>
-<li>recv_mac</li>
-</ul>
+<h4>recv_mac</h4>
 <p><img src="./res/sim1-recv_mac.png" alt=""></p>
+<h4>recv_phy</h4>
 <ul>
-<li>recv_phy</li>
+<li>switch to <code>idle</code> mode</li>
+<li>And then check its <code>virtual collision</code>:
+<ul>
+<li>if <strong>occur</strong>: drop packet directly</li>
+<li>if <strong>not occur</strong>:
+<ul>
+<li>call <code>recv_phy</code> <em><strong>function</strong></em> ( e.g. <code>recv_phy.m</code> )</li>
+<li>calculate the probability of receiving process ( 0 or 1 )
+<ul>
+<li>if == 1
+<ul>
+<li>if this packet is for this node ( broadcast or unicast )
+<ul>
+<li>schedule <code>recv_mac</code> event !</li>
+</ul>
+</li>
+<li>if not for this node, use its <code>nav</code>:
+<ul>
+<li>Update those:
+<ul>
+<li><code>nav.start</code> and <code>nav.end</code> of <code>event.pkt.rv</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p><img src="./res/sim1-recv_phy.png" alt=""></p>
+<h4>wait_for_channel</h4>
 <ul>
-<li>wait_for_channel</li>
+<li>If node is idle and channel is free
+<ul>
+<li><code>true</code>:
+<ul>
+<li>If backoff_counter of this node &gt; 0
+<ul>
+<li><code>true</code>:
+<ul>
+<li>resume (restart) the backoff, then schedule <code>backoff</code> event after time <code>t + slot_time</code> for this node!</li>
+</ul>
+</li>
+<li><code>false</code>:
+<ul>
+<li>start backoff from <code>DIFS</code> first, then schedule <code>backoff_start</code> event after time <code>t + DIFS</code> for this node!</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>false</code>:
+<ul>
+<li>means node is not idle, then it must be receiving process;</li>
+<li>need to wait until the current process end</li>
+<li>so schedule <code>wait_for_channel</code> event after <code>t + cca_time</code> again!</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p><img src="./res/sim1-wait.png" alt=""></p>
+<h4>backoff</h4>
 <ul>
-<li>backoff</li>
+<li>If node is still idle &amp; channel is free (→ continue doing backoff)
+<ul>
+<li><code>true</code>:
+<ul>
+<li>If backoff_counter of node &gt; 1
+<ul>
+<li><code>true</code>:
+<ul>
+<li>decrease this counter by 1</li>
+<li>and then re-schedule <code>backoff</code> event after <code>t + slot_time</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>or backoff_counter == 0 (i.e. <em>ready to send packet !</em>)
+<ul>
+<li>schedule <code>send_phy</code> event after time <code>t</code> for this node</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>false</code>: (i.e. node is not idle / channel is busy when backoff occur)
+<ul>
+<li>If backoff_counter of node &gt; 1
+<ul>
+<li><code>true</code>:
+<ul>
+<li>just decrease by 1</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>or == 0
+<ul>
+<li><code>true</code>:
+<ul>
+<li>start a new backoff counter, which <em><strong>more larger than</strong></em> current one! (You can see more in contention window part → PHY)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If not &gt; 1, or == 0 (not match with above case)
+<ul>
+<li>then schedule <code>wait_for_channel</code> event after time <code>t + cca_time</code> for this node</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p><img src="./res/sim1-bo.png" alt=""></p>
+<h4>backoff_start</h4>
+<p>(after waiting <code>DIFS</code>, start <code>backoff</code>!)</p>
 <ul>
-<li>backoff_start</li>
+<li>If node is still idle, and channel is free
+<ul>
+<li><code>true</code>:
+<ul>
+<li>then schedule <code>backoff</code> event after <code>t + slot_time</code> for this node</li>
+</ul>
+</li>
+<li><code>false</code>:
+<ul>
+<li>means that channel during <code>DIFS</code> becomes busy!</li>
+<li>then schedule <code>wait_for_channel</code>, to wait until the channel is free.</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p><img src="./res/sim1-bos.png" alt=""></p>
-<ul>
-<li>timeout_rts</li>
-</ul>
+<h4>timeout_rts</h4>
 <p><img src="./res/sim1-timeout-rts.png" alt=""></p>
-<ul>
-<li>timeout_data</li>
-</ul>
+<h4>timeout_data</h4>
 <p><img src="./res/sim1-timeout-data.png" alt=""></p>
-<ul>
-<li>timeout_rreq</li>
-</ul>
+<h4>timeout_rreq</h4>
 <p><img src="./res/sim1-timeout-rreq.png" alt=""></p>
-<ul>
-<li>send_net</li>
-</ul>
+<h4>send_net</h4>
 <p><img src="./res/sim1-send_net.png" alt=""></p>
-<ul>
-<li>send_net2</li>
-</ul>
+<h4>send_net2</h4>
 <p><img src="./res/sim1-send_net2.png" alt=""></p>
-<ul>
-<li>recv_net</li>
-</ul>
+<h4>recv_net</h4>
 <p><img src="./res/sim1-recv_net.png" alt=""></p>
-<ul>
-<li>send_app</li>
-</ul>
+<h4>send_app</h4>
 <p><img src="./res/sim1-send_app.png" alt=""></p>
-<ul>
-<li>recv_app</li>
-</ul>
+<h4>recv_app</h4>
 <p><img src="./res/sim1-recv_app.png" alt=""></p>
 </p></div></div></div><div class="row flex-right"><p>Created by <span class="badge secondary">@ToolBuddy/@papercss</span></p></div></div></div></body></html>
