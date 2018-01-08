@@ -138,9 +138,64 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 </li>
 </ul>
 </p></div><div class="content" id="content4"><p><h2>Physical Layer</h2>
+<p>Edit: <code>Nuntanut Bhooanusas(Chuanjie Fu)</code></p>
+<hr>
+<p>There are <code>2 parts</code> in this section:</p>
+<ul>
+<li>SNR-based packet capture</li>
+<li>Broadcast &amp; Dynamic transmission rate and power</li>
+</ul>
+<h3>SNR-based packet capture</h3>
+<p>Signal-to noise ratio(SNR), in decibels , is a measurement between receive signals and noise signals.  For wireless communication, it can be computed by Equation N.1 to N.3. The example of SNR is given in Picture N.1</p>
+<p><img src="./res/E1.jpg" alt="Equation N1"></p>
+<ul>
+<li>Equation N.1.</li>
+</ul>
+<p><img src="./res/E2.png" alt="Equation N2"></p>
+<ul>
+<li>Equation N.2.</li>
+</ul>
+<p><img src="./res/E3.png" alt="Equation N3"></p>
+<ul>
+<li>Equation N.3.</li>
+</ul>
+<p>This ratio is unreliable if it falls into 10-15 db and its poor rate is from 16 db to 24 db, whereas the rate of 24-40 db and exceeding 41 db is good and excellent respectively.</p>
+<p><img src="./res/N1.png" alt="Picture N1"></p>
+<ul>
+<li>Picture N.1.</li>
+</ul>
+<p>The SNR is vital for IEEE 802.11 since if it is very low, the packet might need a re-transmission several times. Whether or not delivering a packet from source to destination will be successful is depended on transmission rate and power adjustment. The next section explains towards this adjustment.</p>
+<h3>Broadcast &amp; Dynamic transmission rate and power</h3>
+<p>Another thing , a transmission power , is to save energy of devices and battery life. It also affect the transmission rate. For example, when the distance of piers is small, <code>the power level will be reduced and the data rate will increase to the highest possibility such that the packet can reach the destination</code>.</p>
+<p>Both the transmission power and the transmission rate is necessary for a service requirement since they can be related to packet errors during broadcasting. The further information is provided in [1].</p>
+<p>[1] http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.404.5870&amp;rep=rep1&amp;type=pdf</p>
 </p></div><div class="content" id="content5"><p><h2>Network Routing Protocol</h2>
 </p></div><div class="content" id="content6"><p><h2>Overlay</h2>
 </p></div><div class="content" id="content7"><p><h2>MAC Layer</h2>
+<p>Edit: <code>Nuntanut Bhooanusas(Chuanjie Fu)</code></p>
+<hr>
+<p>There are <code>2 parts</code> in this section:</p>
+<ul>
+<li>CSMA/CA( Carrier Sense Multiple Access with Collision Avoidance)</li>
+<li>Virtual Carrier Sense and RTS-CTS-DATA-ACK</li>
+</ul>
+<h3>CSMA/CA( Carrier Sense Multiple Access with Collision Avoidance)</h3>
+<p>CSMA is a protocol for carrier transmission in IEEE 802.11 network to protect a packet collision by listen-before-talk; this approach is nowadays applied to distributed coordination function(DCF).</p>
+<p>In DCF, there are two time periods. The first one, DCF Inter-Frame Space(DIFS), is to tell a senders whether or not the medium is idle before starting sending a packet. Another one , Short Inter-Frame Space(SIFS), is a period that the medium can send the acknowledgement and will take place after the end of DIFS. The basic example is shown in Figure N.1</p>
+<p><img src="./res/F1.png" alt="Figure N1"></p>
+<ul>
+<li>Figure N.1 Basic method of DCF.</li>
+</ul>
+<p>However, the method above can bring about collisions in the case that there are two or more stations sense the medium idle and try to transmit at the same time. In order to prevent this situation, the station should postpone access until the medium becomes idles and select a random backoff value. How to medium protect collisions and choose this value is fully explained in course material(Please see in the NCKU moodle)</p>
+<h3>Virtual Carrier Sense and RTS-CTS-DATA-ACK</h3>
+<p>RTS/CTS is defined to solve the hidden terminal problem found in wireless that use CSMA.  Importantly, the sender and receiver perform a handshake mechanism by exchanging RTS(Request to send) and CTS(Clear to send) control frame.</p>
+<p>This approach will begin after waiting the DIFs time; then the sender send RTS to receiver prior to transmission of data frame. After awaiting SIFs, the receiver will respond with CTS including the successful handshake frame to make sure that the medium is reserved for transmission.</p>
+<p>Moreover, RTS/CTS employs Virtual Carrier Sensing so as to inform other stations that there is packet broadcasting in the network by RTS and CTS frames including  the duration when the sender and the receiver complete the transmission.  As a result, all stations around this area will then set their NAV(Network Allocation Vector) after obtaining these frame so that they can know the period that they need to wait for the completion of the transmission.</p>
+<p>The RTS/CTS mechanism is provided in Figure N.2.</p>
+<p><img src="./res/F2.png" alt="Figure N2"></p>
+<ul>
+<li>Figure N.2 RTS/CTS Mechanism.</li>
+</ul>
 </p></div><div class="content" id="content8"><p><h2>Tracing the code</h2>
 <h3>Workflow - sim1.m</h3>
 <p>We'll have a closely look on the main program flow here, and then move to event part to have advanced appearence.</p>
