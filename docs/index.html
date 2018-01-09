@@ -181,7 +181,7 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 <h3>Structure</h3>
 <ul>
 <li>No fixed infrastructure, no prior planning and layout, but rely on self-communication between members, anytime, anywhere organization</li>
-<li>Can send data by Unicast or Multicast(可以利用单播或群播来传输资料)</li>
+<li>Can send data by Unicast or Multicast</li>
 </ul>
 <h3>Routing</h3>
 <ul>
@@ -189,29 +189,29 @@ In each simulation routine (i.e. tick), will let each node choose randomly on <c
 <p>Route path is important(尋找路由路徑的過程，稱為路由探索 (Route discovery)。</p>
 </li>
 <li>
-<p>在路由探索的過程中，節點利用廣播 (Broadcast) 路由請求 (Route request, RREQ) 來獲得路由路徑。</p>
+<p>In the process of route exploration, nodes use Broadcast Route Request (RREQ) to obtain the routing path.</p>
 </li>
 <li>
-<p>當一節點打算送出封包，但其路由的表格中並沒有 到該目的節點的資訊時，則該節點會啟動路由探索 (Route discovery) 程序，來找尋到目的地節點的路由 路徑。</p>
+<p>When a node intends to send a packet, but the routing table does not contain information about the destination node, the node initiates a route discovery procedure to find the routing path to the destination node.</p>
 <ul>
-<li>由來源節點先發出路由請求 (Route request, RREQ) 封包以 啟動路由探索程序，當某一中繼節點收到RREQ封包時， 它首先會判斷是否廣播過該RREQ封包，如果是，則丟棄 此RREQ封包；如果沒有，則會更新此RREQ封包內部的 資訊，並且繼續廣播此RREQ封包。</li>
-<li>當此RREQ封包被送到目的地節點或是某一中繼節點的路 由緩衝中含有目的地節點的資訊時，該含有資訊的節點會 回覆一路由回應 (Route Reply, RREP) 封包返回到啟動路 由探索程序的來源節點。</li>
-<li>RREP利用來源路由的策略來傳送，即RREP封包中包含有 回送路徑中各個中繼節點的資訊，這些資訊記錄在封包的 表頭中，而RREP封包會依照著這些資訊送回來源節點， 當來源節點收到RREP封包後，則開始傳送資料封包。</li>
-<li>當連結發生失敗時(發送封包到下一中繼節點失敗)，則會 產生路由錯誤 (Route Error, RERR) 封包，送回並告知來源 節點，沿途的節點會把該路由資訊清除，而當來源節點收 到RERR之後，會重新啟動路由探索程序來尋找新的路徑 以替代原本的路徑。</li>
+<li>The source node sends a Route Request (RREQ) packet to start the route discovery procedure. When a relay node receives the RREQ packet, it first judges whether the RREQ packet is broadcasted. If so, it discards the RREQ packet Packet; if not, the information inside this RREQ packet is updated and the RREQ packet continues to be broadcast.</li>
+<li>When the RREQ packet is sent to the destination node or the routing buffer of a certain relay node contains the information of the destination node, the node containing the information will reply a Route Reply (RREP) packet back to the startup route Explore the source node of the program.</li>
+<li>RREP uses source routing policy to transmit RREP packets that contain the information of each relay node in the loopback path. The information is recorded in the header of the packet, and the RREP packet is sent back to the source node according to the information. When the source After the node receives the RREP packet, it starts to send the data packet.</li>
+<li>When the connection fails (sending the packet to the next relay node fails), a Route Error (RERR) packet is generated, sent back to the source node, and the node along the route clears the routing information. When the source After the node receives RERR, it will restart the route discovery program to find a new path to replace the original path.</li>
 </ul>
 </li>
 <li>
-<p>節點散佈的區域廣泛，廣播的訊息需要一些中繼節點重播(Rebroadcast)，才能使所有節點得知，但因節點位置可能改變，造成多次重播，進而出現廣播風暴問題。</p>
+<p>Nodes spread widely and broadcast messages require some relay node replay (Rebroadcast), in order to make all nodes aware, but because of the node location may change, resulting in multiple replay, and then broadcast storm.</p>
 </li>
 <li>
 <p>Power issue: related to the complexity of routing path</p>
 </li>
 <li>
-<p>主動式路由協定 (pro-active routing protocol)</p>
+<p>Pro-active routing protocol</p>
 <ul>
-<li>主動式路由方法先為網路中任意的兩節點建立路由資訊 ，因此當有新連線要建立時 (來源節點傳送封包到目的節 點)，便能夠及時得到路由資訊，將封包送到目的地。考 慮到無線隨意網路頻寬有限且移動性高，需要將原本應 用在網際網路 (Internet) 上的路由方法做一些變化來適應 。目前專為無線網路設計的主動式路由協議，大致分為 距離向量法 (Distance vector) 與鏈結狀態 (Link state) 兩類 路由方法。</li>
-<li>距離向量法是由相鄰的節點互相交換彼此的距離向量，經過持續的交換之後，此向量會記錄自己到網 路中所有節點的距離，將資訊散播到整個網路中， 由此來計算出自己到整個網路中所有節點的最佳路由方法。</li>
-<li>節點會選擇一條總成本 (經過路徑的所有成本總和)最低的路徑，用來把資料從來源節點送到目的節點</li>
+<li>The active routing method first establishes routing information for any two nodes in the network. Therefore, when a new connection is established (the source node sends the packet to the destination node), routing information can be obtained in time to send the packet to the destination. Taking into account the wireless free network bandwidth is limited and high mobility, the original routing method used in the Internet to do some changes to adapt. At present, active routing protocols designed specifically for wireless networks are broadly divided into two types of routing methods: Distance vector and Link state.</li>
+<li>Distance vector method is the adjacent nodes exchange each other's distance vector, after continuous exchange, this vector will record their own distance to all nodes in the network, the information is spread to the entire network, which can be calculated The best route to yourself for all the nodes in the entire network.</li>
+<li>The node chooses a path with the lowest total cost (the sum of all the costs that go through the path), which is used to send the data from the source node to the destination node</li>
 </ul>
 </li>
 </ul>
