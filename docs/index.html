@@ -518,18 +518,379 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 </ul>
 <p><img src="./res/sim1-bos.png" alt=""></p>
 <h4>timeout_rts</h4>
+<ul>
+<li>To begin with, Check whether or not there is a <code>pending id</code> being equal to <code>waiting RTS id</code> <code>i.e., (pending_id(i) == event.pkt.id)</code>
+<ul>
+<li>if so,
+<ul>
+<li>start re-transmit <code>i.e., retransmit(i)=retransmit(i)+1</code></li>
+<li>if retransmit(i) &gt; max_retries
+<ul>
+<li>if so, (node i has so many to transmit RTS)
+<ul>
+<li>drop packet <code>retransmit(i) = 0</code> ,<code>pending_id(i) = 0</code></li>
+<li>Check whether or not there are many packets waiting to be sent in queue
+<ul>
+<li>yes
+<ul>
+<li><code>mac_status(i) = 1</code></li>
+<li>Schedule <code>wait_for_channel</code> event  after <code>t + cca_time</code></li>
+</ul>
+</li>
+<li>No
+<ul>
+<li>mac_status(i) = 0` (cannot send RTS successfully, reset MAC layer)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No ,
+<ul>
+<li>(retransmit the RTS)</li>
+<li>Schedule <code>wait_for_channel</code> event  after <code>t + cca_time</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No, display(pending id does not match the waiting RTS id)</li>
+</ul>
+</li>
+</ul>
 <p><img src="./res/sim1-timeout-rts.png" alt=""></p>
 <h4>timeout_data</h4>
 <p><img src="./res/sim1-timeout-data.png" alt=""></p>
 <h4>timeout_rreq</h4>
+<ul>
+<li>Check how many pending RREQ ids are there in the node id <code>temp = find(net_pending(i).id == event.net.id)</code> <em>the function find will return a indices of non-zero element</em>
+<ul>
+<li>if len(temp = 0)
+<ul>
+<li>if yes →every RREQ is acknowledged , do nothing → return</li>
+</ul>
+</li>
+<li>if len(temp &gt;1 )
+<ul>
+<li>if yes → error(“node i has more than one pending RREQs with  <code>net.id</code></li>
+</ul>
+</li>
+<li>The RREQ is not acknowledged yet by an RREP
+<ul>
+<li>Start re-transmit → <code>net_pending(i).retransmit(temp) = net_pending(i).retransmit(temp) + 1</code></li>
+<li>if there are so many retries → <code>net_pending(i).retransmit(temp) &gt; net_max_retries</code>
+<ul>
+<li>If so,
+<ul>
+<li>-Drop the RREQ i.e., <code>net_pending(i).id(temp)=[]</code> , <code>net_pending(i).retransmit(temp)=[]</code></li>
+<li>-if network_queue is not empty (so redundant)
+<ul>
+<li>clear network queue →<code>net_queue(i).list(1)=[]</code></li>
+<li>Schedule <code>send_net2</code> event after <code>t</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No, retransmit RREQ by
+<ul>
+<li>-Schedule <code>send_mac</code> event after <code>t</code></li>
+<li>-set new_id for re-transmission
+<ul>
+<li><code>newevent.net.id = new_id(i)</code></li>
+<li><code>net_pending(i).id(temp) = newevent.net.id</code></li>
+<li><code>rreq_out(i)=rreq_out(i)+1</code></li>
+</ul>
+</li>
+<li>-Sent RREQ out via crosslayer  if type of application is defined ‘crosslayer_searching’  i.e., <code>if(strcmp(newevent.app.type, 'crosslayer_searching')-&gt;rreq_out_crosslayer(i) = rreq_out_crosslayer(i) + 1</code></li>
+<li>-Set timeout timer for the retransmitted RREQ
+<ul>
+<li>-Schedule <code>timeout_rreq</code> event after <code>t+rreq_timeout</code></li>
+<li>-Save the new id of the pending RREQ by <code>net_pending(i).id(temp)=newevent.net.id</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p><img src="./res/sim1-timeout-rreq.png" alt=""></p>
 <h4>send_net</h4>
 <p><img src="./res/sim1-send_net.png" alt=""></p>
 <h4>send_net2</h4>
 <p><img src="./res/sim1-send_net2.png" alt=""></p>
 <h4>recv_net</h4>
+<ul>
+<li>Decrease  time to live(TTL) by 1 unit</li>
+<li>event.pkt.ttl = event.pkt.ttl - 1;
+<ul>
+<li>if(event.pkt.ttl&lt;0)
+<ul>
+<li>drop packet , return</li>
+</ul>
+</li>
+<li>if the destination node is as same as transmission node
+<ul>
+<li>no action , return</li>
+</ul>
+</li>
+<li>Check type of network layer
+<ul>
+<li><code>rreq</code>
+<ul>
+<li>Change flag of rreq_in → rreq_in(i)=rreq_in(i)+1</li>
+<li>Enable rreq for crosslayer if app.type is ‘'crosslayer_searching’ i.e., <code>rreq_in_crosslayer(j) = rreq_in_crosslayer(j) + 1</code></li>
+<li>if node <code>j</code> is member of the route in network
+<ul>
+<li>Yes, already found the route, do noting , return</li>
+<li>No, append node <code>j</code> to the route i.e., <code>event.net.route = [event.net.route j]</code></li>
+</ul>
+</li>
+<li>If node j is equal to the given destination by <code>event.net.dst</code>
+<ul>
+<li>Yes
+<ul>
+<li>node <code>j</code> am the destination of this RREQ: send RREP back</li>
+<li><code>send_rrep = -1</code></li>
+<li>if rrep_table is empty
+<ul>
+<li>yes, <code>k = 1</code> and <code>send_rrep = 1</code></li>
+<li>No, rrep table is not empty ,
+<ul>
+<li>Check at the source whether there are saved RREQ or not()<code>if (rrep_table(j).list(k).route(1)==i)</code>
+<ul>
+<li>yes,
+<ul>
+<li>set <code>send_rrep = 1</code>, if the RREQ is table is old i.e., <code>if rrep_table(j).list(k).id &lt; event.net.id</code></li>
+<li>if RREQ id in table is equal to <code>event.net.id</code>
+<ul>
+<li>Yes, if the matric of event.net is smaller than rreq table,<code>send_rrep = 1</code>, Otherwise, <code>send_rrep = 0</code> <code>//not a better route: ignore</code></li>
+</ul>
+</li>
+<li>No,  <code>send_rrep = 0</code> <code>//reply to the newer</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If <code>send_rrep != 0</code>
+<ul>
+<li>Yes, Change flag rrep_out → <code>rrep_out(j) = rrep_out(j) + 1</code>
+<ul>
+<li>rrep_out_crosslayer(j) = rrep_out_crosslayer(j) + 1 if event.app.type = 'crosslayer_searching'</li>
+<li>if(<code>send_rrep&lt;0)</code> → k = length(rrep_table(j).list) + 1 — no early saved RREQ from this src: add one</li>
+<li>initialize <code>rreq_table</code></li>
+<li>Schedule <code>send_mac</code> event after <code>t</code></li>
+<li>newevent.net.type =<code>'rrep'</code></li>
+<li>newevent.pkt.type=<code>'data'</code>;</li>
+<li>newevent.pkt.tx = j;</li>
+<li>newevent.pkt.rv = newevent.net.route(temp - 1); % next hop</li>
+<li>newevent.pkt.id=0   -- will be updated in 'send_phy'</li>
+<li>newevent.pkt.nav=0; -- will be updated in lower layer</li>
+<li>return</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No,  do nothing ,return</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Node j is not the destination of the RREQ , re-broadcast it</li>
+<li>if event.pkt.ttl&lt;0
+<ul>
+<li>Yes, drop it ,return</li>
+<li>No,
+<ul>
+<li>if event.net.id &gt; bcast_table(j, event.net.src)
+<ul>
+<li>Yes, forward this RREQ only if meduim have not forwarded the same broadcast RREQ from the same source before</li>
+<li>Enable rreq for crosslayer if app.type is ‘'crosslayer_searching’ i.e.,<code>rreq_forward_crosslayer(j) = rreq_forward_crosslayer(j) + 1</code></li>
+<li>update braodcast table <code>bcast_table(j, event.net.src) = event.net.id</code></li>
+<li>Schedule <code>send_mac</code> event after <code>t + rand*slot_time</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>rrep</code>
+<ul>
+<li>Change flag of rrep_in → rrep_in(i)=rrep_in(i)+1</li>
+<li>Enable rrep for crosslayer if app.type is ‘'crosslayer_searching’ i.e.,<code>rrep_in_crosslayer(j) = rrep_in_crosslayer(j) + 1</code></li>
+<li>If route is empty , return — node j is receiving a RREP without any route entry</li>
+<li>temp = find(event.net.route == j) — examine node j is in the route or not
+<ul>
+<li>If there are node J more than once in route(RREP) ,  do noting , return</li>
+<li>If there is node J more than once in route(RREP), do nothing, return</li>
+<li>if the number of node J == 1
+<ul>
+<li>Yes //find the requesting node so this RREP is suspected
+<ul>
+<li>Check how many RREQ in the route</li>
+<li><code>(temp2 = find(net_pending(j).id == event.net.id)</code>
+<ul>
+<li>if there is no RREQ , node j receives an RREP without a corresponding pending RREQ, return</li>
+<li>if there are RREQ more than once in the route, return</li>
+</ul>
+</li>
+<li>Removes the pending RREQ
+<ul>
+<li>net_pending(j).id(temp2) = []</li>
+<li>net_pending(j).retransmit(temp2) = []</li>
+</ul>
+</li>
+<li>If event.app.type = ‘crosslayer_searching’
+<ul>
+<li>Yes
+<ul>
+<li><code>rrep_destination_crosslayer(j) = rrep_destination_crosslayer(j) + 1</code></li>
+<li>Schedule <code>recv_app</code> event after <code>t</code></li>
+</ul>
+</li>
+<li>No
+<ul>
+<li>Schedule <code>send_mac</code> event after <code>t</code></li>
+<li>newevent.net.type =<code>'data'</code></li>
+<li>newevent.net.id = <code>new_id(j)</code></li>
+<li>newevent.pkt.tx = j;</li>
+<li>newevent.pkt.rv = newevent.net.route(temp - 1); % next hop</li>
+<li>newevent.pkt.type=<code>'data'</code>;</li>
+<li>newevent.pkt.id=0   -- will be updated in 'send_phy'</li>
+<li>newevent.pkt.nav=0; -- will be updated in lower layer</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No,
+<ul>
+<li>Schedule <code>send_mac</code> event after <code>t</code></li>
+<li>newevent.net.type =<code>'rrep'</code></li>
+<li>newevent.pkt.tx = j;</li>
+<li>newevent.pkt.rv = newevent.net.route(temp - 1); % next hop</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>data</code>
+<ul>
+<li>if (event.net.dst == 0)
+<ul>
+<li>Yes, <code>//a network layer broadcast packet</code>
+<ul>
+<li>if event.pkt.rv != 0, waring <code>node j receives a broadcast at NET, but not at MAC</code></li>
+<li>if event.net.id is new than bcast_table(j, event.net.src)
+<ul>
+<li>update bcast_table(j, event.net.src) = event.net.id</li>
+<li>Schedule <code>send_mac</code> event after <code>t + rand*slot_time</code></li>
+</ul>
+</li>
+<li>return</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>if route is empty <code>//receives a unicast data packet at network layer</code>
+<ul>
+<li>‘Node j is receiving a Net_DATA without any route entry` , return</li>
+</ul>
+</li>
+<li>temp = find(event.net.route == j) <code>// find there are node j in the route or not</code></li>
+<li>if find node <code>j</code> more than once in the data packet, return</li>
+<li>if there is no node <code>j</code> in the data packet, return</li>
+<li>if node <code>j</code> is the destination
+<ul>
+<li>Yes
+<ul>
+<li>Schedule <code>recv_app</code> event after <code>t</code></li>
+</ul>
+</li>
+<li>No
+<ul>
+<li>Schedule <code>send_mac</code> event after <code>t</code></li>
+<li>newevent.pkt.tx = j;</li>
+<li>newevent.pkt.rv = newevent.net.route(temp + 1)</li>
+<li><code>Forward this data packet to the next hop towards the destination</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p><img src="./res/sim1-recv_net.png" alt=""></p>
 <h4>send_app</h4>
+<ul>
+<li>Check type of application layer <code>event.app.type</code>
+<ul>
+<li>Crosslayer_Searching
+<ul>
+<li>node i sends a a crosslayer searching request for key(node) e.g.,<code>event.app.key</code></li>
+<li>Schedule <code>send_net</code> event</li>
+<li>from source <code>newevent.net.src = i</code> to destination <code>newevent.net.dst = newevent.app.key</code></li>
+</ul>
+</li>
+<li>dht_serching
+<ul>
+<li>Schedule <code>send_net</code></li>
+<li>check whether or not there is dht overlay route →(<code>if isempty(newevent.app.route)</code>)
+<ul>
+<li>No,
+<ul>
+<li>initialize dht overlay searching
+<ul>
+<li>-newevent.app.route = [i]</li>
+<li>-random one node for build the path →( tempn = floor(rand*log2(n));)</li>
+<li>if tempn &gt; 0
+<ul>
+<li>Random node again by <code>tempx = ceil(rand*n)</code>
+<ul>
+<li>if the destination (newevent.app.route newevent.app.key) have never made as route i.e,<code>if isempty(find([newevent.app.route newevent.app.key]==tempx))</code>
+<ul>
+<li>-use app.key as the destination of node i i.e., <code>newevent.app.route = [newevent.app.route newevent.app.key]</code> ,<code>newevent.net.dst = newevent.app.route(2)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Undefined type
+<ul>
+<li>display (Undefined application layer type) → end</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p><img src="./res/sim1-send_app.png" alt=""></p>
 <h4>recv_app</h4>
 <p><img src="./res/sim1-recv_app.png" alt=""></p>
