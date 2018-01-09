@@ -1,4 +1,4 @@
-<!-- "doc" type, with tabs usage as template--><!-- Author: Kevin Cyu--><!-- include mixins--><!-- mixin - list--><!-- main--><!DOCTYPE html><html><!-- include header--><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Project 2</title><link rel="stylesheet" href="./asset/highlight.min.css"/><link rel="stylesheet" href="./asset/paper.min.css"/><link rel="stylesheet" href="./asset/monokai.css"/><link rel="stylesheet" href="./asset/main.css"/><link rel="stylesheet" href="./asset/cn-font.css"/><style>.tabs input[id=tab6]:checked~div[id=content6]{display:block}</style><style>.tabs input[id=tab7]:checked~div[id=content7]{display:block}</style><style>.tabs input[id=tab8]:checked~div[id=content8]{display:block}</style><style>.tabs input[id=tab9]:checked~div[id=content9]{display:block}</style><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script src="./asset/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body><div class="container"><div class="paper"><div class="demo-title" id="top"><div class="row flex-center"><div class="text-center"> <h1>Project 2</h1></div></div></div><div class="section"><div class="flex-spaces tabs">
+<!-- "doc" type, with tabs usage as template--><!-- Author: Kevin Cyu--><!-- include mixins--><!-- mixin - list--><!-- main--><!DOCTYPE html><html><!-- include header--><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Project 2</title><link rel="stylesheet" href="./asset/highlight.min.css"/><link rel="stylesheet" href="./asset/paper.min.css"/><link rel="stylesheet" href="./asset/monokai.css"/><link rel="stylesheet" href="./asset/main.css"/><link rel="stylesheet" href="./asset/cn-font.css"/><style>.tabs input[id=tab6]:checked~div[id=content6]{display:block}</style><style>.tabs input[id=tab7]:checked~div[id=content7]{display:block}</style><style>.tabs input[id=tab8]:checked~div[id=content8]{display:block}</style><style>.tabs input[id=tab9]:checked~div[id=content9]{display:block}</style><style>.tabs input[id=tab10]:checked~div[id=content10]{display:block}</style><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script src="./asset/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body><div class="container"><div class="paper"><div class="demo-title" id="top"><div class="row flex-center"><div class="text-center"> <h1>Project 2</h1></div></div></div><div class="section"><div class="flex-spaces tabs">
 <input id="tab1" type="radio" name="tabs" checked/>
 <label for="tab1">01-Intro</label>
 
@@ -25,6 +25,9 @@
 
 <input id="tab9" type="radio" name="tabs"/>
 <label for="tab9">03-event</label>
+
+<input id="tab10" type="radio" name="tabs"/>
+<label for="tab10">04-Util</label>
 
 <div class="content" id="content1"><p><h2>Introduction</h2>
 <p>Project 2 is aim to anaylze the source code of 802.11 mechanism. Using MATLAB source code to illustrate how does it work.</p>
@@ -530,4 +533,47 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 <p><img src="./res/sim1-send_app.png" alt=""></p>
 <h4>recv_app</h4>
 <p><img src="./res/sim1-recv_app.png" alt=""></p>
+</p></div><div class="content" id="content10"><p><h2>Utility</h2>
+<p>Some other source code like <code>recv_phy.m</code>, <code>recv_power.m</code> ...  will be discussed here.</p>
+<h3>recv_phy.m</h3>
+<p>Calculate the power receive by current node. (with <code>SNR</code>)</p>
+<ul>
+<li>transmition node: <code>event.pkt.tx</code></li>
+<li>receiving node: <code>event.pkt.rv</code></li>
+</ul>
+<pre><code class="language-c">Pr0 = recv_power(tx, rv, rmodel);
+Pr = 0;
+I = find(node(:, 3)&gt;0);
+for i=1:length(I)
+   tx1 = I(i);
+   if tx1 == rv, continue; end
+   if tx1 == tx, continue; end
+   Pr = Pr + recv_power(tx1, rv, rmodel);
+end
+
+N0 = white_noise_variance;
+SNR = db(Pr0/(Pr+N0), 'power');
+
+% Return with Pr0 and SNR
+return;
+</code></pre>
+<p>Then calling <code>recv_power.m</code> to get the power value.</p>
+<p>See more in <code>02-3-PHY</code> to see the detail.</p>
+<hr>
+<h3>recv_power.m</h3>
+<p>Choosing model from <strong>Radio propagation</strong> ( <code>friis(free space)</code>, <code>two-ray</code>, <code>shadowing</code> ), this program using <code>shadowing</code> as default value.</p>
+<p>Before calculating the power, call <code>position_update.m</code> to refresh the position of each node.</p>
+<pre><code class="language-c">switch rmodel
+    case 'friis'
+        Pr = friis(Pt, Gt, Gr, lambda, L, d);
+    case 'tworay'
+        [Pr, crossover_dist] = tworay(Pt, Gt, Gr, lambda, L, ht, hr, d);
+    case 'shadowing'
+        Pr = log_normal_shadowing(Pt, Gt, Gr, lambda, L, pathLossExp, std_db, d0, d);
+end
+</code></pre>
+<p>See more in <code>02-1-Radio</code> to see the detail.</p>
+<hr>
+<h3>inv_recv_power.m</h3>
+<p>Inverse version of recv_power, using the power to get the corresponding <code>distance</code>.</p>
 </p></div></div></div><div class="row flex-right"><p>Created by <span class="badge secondary">@ToolBuddy/@papercss</span></p></div></div></div></body></html>
