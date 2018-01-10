@@ -4,6 +4,10 @@ Listing all event types in simulation.
 
 ### Sim1 & Sim2
 
+* All the event flow goes here:
+
+![](../gliffy/event-flow.png)
+
 #### send_phy
 
 When current event's node is idle & `nav` is not busy -> will using this node as `transmitter` 
