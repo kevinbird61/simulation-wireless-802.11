@@ -2,7 +2,7 @@
 
 Listing all event types in simulation.
 
-### Sim1
+### Sim1 & Sim2
 
 #### send_phy
 
@@ -208,8 +208,6 @@ And then checkout this node's MAC queue ->
 
 #### timeout_data
 
-![](../gliffy/sim1-timeout-data.png)
-
 * if `pending_id(i) == event.pkt.id`
 	* data packet needs to be retransmit
 	*  if `retransmit(i) < max_retransmit`
@@ -222,7 +220,8 @@ And then checkout this node's MAC queue ->
 			* if so, set `mac_status(i) = 0`
 			* else 
 				* Schedule event from `mac_queue(i).list(1)` to `waiting for channel` in `t + cca_time`; 
-* 
+
+![](../gliffy/sim1-timeout-data.png)
 
 #### timeout_rreq
 
@@ -254,14 +253,14 @@ And then checkout this node's MAC queue ->
 
 #### send_net
 
-![](../gliffy/sim1-send_net.png)
-
 * Event provides `net.dst`, `net.src`, `net.size`
 * if net_queue is not empty
 	* wait in queue
 	* `net_queue(i).list = [net_queue(i).list event] `
 * else
 	* Schedule `send_net2` event	
+
+![](../gliffy/sim1-send_net.png)
 
 #### send_net2
 
@@ -418,8 +417,6 @@ And then checkout this node's MAC queue ->
 
 #### recv_app
 
-![](../gliffy/sim1-recv_app.png)
-
 * Check `event.app.type`
 	* case `crosslayer_searching`
 		* Record `traffic_id`, `topo_id`, `end_time`, `hop_count`, `requesting node`, `requesting key`
@@ -439,3 +436,5 @@ And then checkout this node's MAC queue ->
 			* Make sure the previous ACK at MAC layer is finish
     		*  `newevent.net.dst = event.app.route(tempi + 1)`
 * End
+
+![](../gliffy/sim1-recv_app.png)

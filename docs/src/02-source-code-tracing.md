@@ -20,3 +20,7 @@ We'll have a closely look on the main program flow here, and then move to event 
 
 
 ### Workflow - sim2.m
+
+The difference between `sim1.m` and `sim2.m` is the `position_init.m`. 
+
+![](../gliffy/sim2.png)

@@ -293,9 +293,11 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 </ul>
 <p><img src="./res/sim1_success_rate.png" alt=""></p>
 <h3>Workflow - sim2.m</h3>
+<p>The difference between <code>sim1.m</code> and <code>sim2.m</code> is the <code>position_init.m</code>.</p>
+<p><img src="./res/sim2.png" alt=""></p>
 </p></div><div class="content" id="content9"><p><h2>Event</h2>
 <p>Listing all event types in simulation.</p>
-<h3>Sim1</h3>
+<h3>Sim1 &amp; Sim2</h3>
 <h4>send_phy</h4>
 <p>When current event's node is idle &amp; <code>nav</code> is not busy -&gt; will using this node as <code>transmitter</code></p>
 <p>And then set up the other nodes as <code>receiver</code>: (2 mode)</p>
@@ -373,6 +375,95 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 <p><img src="./res/sim1-send_mac.png" alt=""></p>
 <h4>recv_mac</h4>
 <p><img src="./res/sim1-recv_mac.png" alt=""></p>
+<ul>
+<li>check if  <code>event.pkt.rv == 0 &amp; strcmp(event.pkt.type, 'data') == 0</code></li>
+<li>broadcast but not data packet
+<ul>
+<li>if so, report error</li>
+</ul>
+</li>
+<li>if <code>event.node == 1</code>
+<ul>
+<li>myself sent this packet, no action</li>
+<li>return</li>
+</ul>
+</li>
+<li>else switch <code>event.pkt.type</code>
+<ul>
+<li>rts
+<ul>
+<li>send back a CTS, keep the data size, rate, and id as RTS packet</li>
+<li>Schedule event <code>send_phy</code> in t</li>
+</ul>
+</li>
+<li>cts
+<ul>
+<li>remove pending id for RTS</li>
+<li>if <code>pending_id(j) != event.pkt.id</code> //probably this CTS is in response to an earlier RTS, so we just ignore this CTS.</li>
+<li>return</li>
+<li>send data</li>
+<li>schedule event <code>send_phy</code> in <code>t + SIFS</code></li>
+<li>keep the data size and rate as before</li>
+<li><code>newevent.pkt.type = 'data'</code></li>
+<li>create a new id for the data packet</li>
+<li><code>newevent.pkt.id = new_id(j)</code></li>
+</ul>
+</li>
+<li>data
+<ul>
+<li>should check that this is not a duplicated or out-of-order packet</li>
+<li>if <code>event.pkt.rv != 0</code>
+<ul>
+<li>schedule event <code>send_phy</code> in <code>t + SIFS</code></li>
+<li>keep the data size, rate, and id the same as DATA packet</li>
+</ul>
+</li>
+<li>Schedule a new event to send data up to network layer
+<ul>
+<li>Make sure the ACK is sent out before processing this data packet</li>
+<li>if <code>event.pkt.rv != 0</code></li>
+<li><code>newevent.instant = t + SIFS + ack_tx_time + 2*eps</code></li>
+</ul>
+</li>
+<li>else
+<ul>
+<li><code>newevent.instant = t + 2*eps</code></li>
+</ul>
+</li>
+<li>Schedule event <code>recv_net</code> in time(just mention)</li>
+<li>end</li>
+</ul>
+</li>
+<li>ack
+<ul>
+<li>make sure the acknowledged packet is the just sent DATA packet</li>
+<li>if <code>pending_id(j) != event.pkt.id</code>
+<ul>
+<li>probably this is a duplicated ACK (same reason as the above CTS case)</li>
+<li>return</li>
+</ul>
+</li>
+<li>remove pending id for DATA</li>
+<li><code>pending_id(j) = 0</code></li>
+<li><code>retransmit(j) = 0</code></li>
+<li>if isempty(mac_queue(j).list) is false
+<ul>
+<li>more packets are waiting to be sent</li>
+<li>Schedule event <code>waiting_for_channel</code> in <code>t + cca_time</code></li>
+<li>the packet setup is already done in <code>send_mac</code></li>
+</ul>
+</li>
+<li>else
+<ul>
+<li>reset mac layer</li>
+<li><code>mac_status(j) = 0</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <h4>recv_phy</h4>
 <ul>
 <li>switch to <code>idle</code> mode</li>
@@ -562,6 +653,35 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 </ul>
 <p><img src="./res/sim1-timeout-rts.png" alt=""></p>
 <h4>timeout_data</h4>
+<ul>
+<li>if <code>pending_id(i) == event.pkt.id</code>
+<ul>
+<li>data packet needs to be retransmit</li>
+<li>if <code>retransmit(i) &lt; max_retransmit</code>
+<ul>
+<li>retransmit the DATA</li>
+<li><code>retransmit(i) += 1</code></li>
+<li>Schedule event <code>waiting_for_channel</code> in <code>t + cca_time</code></li>
+</ul>
+</li>
+<li>else, reach the trying limit, drop data packet
+<ul>
+<li>set <code>retransmit(i) = 0</code>,  <code>pending_id(i) = 0</code></li>
+<li>check if mac_queue is empty
+<ul>
+<li>if so, set <code>mac_status(i) = 0</code></li>
+<li>else
+<ul>
+<li>Schedule event from <code>mac_queue(i).list(1)</code> to <code>waiting for channel</code> in <code>t + cca_time</code>;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p><img src="./res/sim1-timeout-data.png" alt=""></p>
 <h4>timeout_rreq</h4>
 <ul>
@@ -621,9 +741,45 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 </ul>
 <p><img src="./res/sim1-timeout-rreq.png" alt=""></p>
 <h4>send_net</h4>
+<ul>
+<li>Event provides <code>net.dst</code>, <code>net.src</code>, <code>net.size</code></li>
+<li>if net_queue is not empty
+<ul>
+<li>wait in queue</li>
+<li><code>net_queue(i).list = [net_queue(i).list event]</code></li>
+</ul>
+</li>
+<li>else
+<ul>
+<li>Schedule <code>send_net2</code> event</li>
+</ul>
+</li>
+</ul>
 <p><img src="./res/sim1-send_net.png" alt=""></p>
 <h4>send_net2</h4>
 <p><img src="./res/sim1-send_net2.png" alt=""></p>
+<ul>
+<li>Event provides net.dst, net.src, net.size</li>
+<li>if <code>event.net.dst</code> == 0
+<ul>
+<li>broadcast</li>
+<li>Schedule event <code>send_mac</code> in <code>t</code></li>
+<li><code>newevent.net.type = data</code></li>
+<li><code>newevent.pkt.type=data</code></li>
+</ul>
+</li>
+<li>else
+<ul>
+<li>run unicast to find the route by RREP-RREQ</li>
+<li>schedule event <code>send_mac</code> in <code>t</code></li>
+<li><code>newevent.net.type = rreq</code></li>
+<li>set timeout timer for RREQ</li>
+<li>Schedule event <code>timeout_rreq</code> in time <code>t + rreq_timeout</code></li>
+<li>save the id of pending RREQ</li>
+<li><code>net_pending(i).retransmit = [net_pending(i).retransmit 0]</code></li>
+</ul>
+</li>
+</ul>
 <h4>recv_net</h4>
 <ul>
 <li>Decrease  time to live(TTL) by 1 unit</li>
@@ -893,6 +1049,48 @@ http://www-inst.eecs.berkeley.edu/~ee228a/fa03/228A03/Lecture%20Slides/routing4.
 </ul>
 <p><img src="./res/sim1-send_app.png" alt=""></p>
 <h4>recv_app</h4>
+<ul>
+<li>Check <code>event.app.type</code>
+<ul>
+<li>case <code>crosslayer_searching</code>
+<ul>
+<li>Record <code>traffic_id</code>, <code>topo_id</code>, <code>end_time</code>, <code>hop_count</code>, <code>requesting node</code>, <code>requesting key</code></li>
+</ul>
+</li>
+<li>case <code>dht_searching</code>
+<ul>
+<li><code>tempi = find(event.app.route == event.node)</code></li>
+<li>if <code>isempty(tempi)</code> or <code>length(tempi)&gt;1</code>
+<ul>
+<li>receives a wrong DHT searching request</li>
+<li>return</li>
+</ul>
+</li>
+<li><code>tempi == length(event.app.route)</code>
+<ul>
+<li>Schedule event <code>send_net</code> in <code>t + SIFS + ack_tx_time + 2*eps</code></li>
+<li><code>newevent.net.dst = newevent.app.route(1)</code></li>
+</ul>
+</li>
+<li>if tempi == 1
+<ul>
+<li>requester just received the answer from the destination</li>
+<li>Record <code>traffic_id</code>, <code>topo_id</code>, <code>start_time</code>, <code>start_hop_count(=0)</code>, <code>requesting node</code>, <code>requesting key</code>, <code>overlay route length</code></li>
+</ul>
+</li>
+<li>if not matching any
+<ul>
+<li>Schedule event <code>send_net in t + SIFS + ack_tx_time + 2*eps</code></li>
+<li>Make sure the previous ACK at MAC layer is finish</li>
+<li><code>newevent.net.dst = event.app.route(tempi + 1)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>End</li>
+</ul>
 <p><img src="./res/sim1-recv_app.png" alt=""></p>
 </p></div><div class="content" id="content10"><p><h2>Utility</h2>
 <p>Some other source code like <code>recv_phy.m</code>, <code>recv_power.m</code> ...  will be discussed here.</p>
