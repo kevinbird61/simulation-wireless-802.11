@@ -68,6 +68,55 @@ And then checkout this node's MAC queue ->
 
 ![](../gliffy/sim1-recv_mac.png)
 
+* check if  `event.pkt.rv == 0 & strcmp(event.pkt.type, 'data') == 0`
+* broadcast but not data packet
+	* if so, report error
+* if `event.node == 1` 
+	* myself sent this packet, no action
+	* return
+* else switch `event.pkt.type`
+	* rts
+		* send back a CTS, keep the data size, rate, and id as RTS packet
+		* Schedule event `send_phy` in t
+	* cts
+		* remove pending id for RTS
+        * if `pending_id(j) != event.pkt.id` //probably this CTS is in response to an earlier RTS, so we just ignore this CTS.
+        *  return 
+        * send data
+        * schedule event `send_phy` in `t + SIFS`
+        * keep the data size and rate as before
+        * `newevent.pkt.type = 'data'`
+        * create a new id for the data packet
+        * `newevent.pkt.id = new_id(j)`
+	* data
+		* should check that this is not a duplicated or out-of-order packet
+		* if `event.pkt.rv != 0`
+			* schedule event `send_phy` in `t + SIFS`
+			* keep the data size, rate, and id the same as DATA packet
+		* Schedule a new event to send data up to network layer
+        	* Make sure the ACK is sent out before processing this data packet 
+        	* if `event.pkt.rv != 0` 
+        	*  `newevent.instant = t + SIFS + ack_tx_time + 2*eps`
+        * else
+    		* `newevent.instant = t  + 2*eps`
+		* Schedule event `recv_net` in time(just mention)
+		* end
+	* ack 
+		* make sure the acknowledged packet is the just sent DATA packet
+		* if `pending_id(j) != event.pkt.id`
+        	* probably this is a duplicated ACK (same reason as the above CTS case)
+        	* return 
+		* remove pending id for DATA
+    	* `pending_id(j) = 0`
+    	* `retransmit(j) = 0`
+        * if isempty(mac_queue(j).list) is false
+          * more packets are waiting to be sent
+          * Schedule event `waiting_for_channel` in `t + cca_time`
+          * the packet setup is already done in `send_mac`
+        * else 
+          * reset mac layer
+          * `mac_status(j) = 0`
+
 #### recv_phy
 
 * switch to `idle` mode
@@ -161,6 +210,20 @@ And then checkout this node's MAC queue ->
 
 ![](../gliffy/sim1-timeout-data.png)
 
+* if `pending_id(i) == event.pkt.id`
+	* data packet needs to be retransmit
+	*  if `retransmit(i) < max_retransmit`
+		* retransmit the DATA
+		* `retransmit(i) += 1`
+		* Schedule event `waiting_for_channel` in `t + cca_time`
+	* else, reach the trying limit, drop data packet
+		* set `retransmit(i) = 0`,  `pending_id(i) = 0`
+		* check if mac_queue is empty
+			* if so, set `mac_status(i) = 0`
+			* else 
+				* Schedule event from `mac_queue(i).list(1)` to `waiting for channel` in `t + cca_time`; 
+* 
+
 #### timeout_rreq
 
 * Check how many pending RREQ ids are there in the node id `temp = find(net_pending(i).id == event.net.id)` *the function find will return a indices of non-zero element*
@@ -193,9 +256,33 @@ And then checkout this node's MAC queue ->
 
 ![](../gliffy/sim1-send_net.png)
 
+* Event provides `net.dst`, `net.src`, `net.size`
+* if net_queue is not empty
+	* wait in queue
+	* `net_queue(i).list = [net_queue(i).list event] `
+* else
+	* Schedule `send_net2` event	
+
 #### send_net2
 
 ![](../gliffy/sim1-send_net2.png)
+
+ * Event provides net.dst, net.src, net.size
+ * if `event.net.dst` == 0  
+	* broadcast
+	* Schedule event `send_mac` in `t`
+	* `newevent.net.type = data`
+	* `newevent.pkt.type=data`
+ * else
+	* run unicast to find the route by RREP-RREQ
+	* schedule event `send_mac` in `t`
+	* `newevent.net.type = rreq`
+	* set timeout timer for RREQ
+	* Schedule event `timeout_rreq` in time `t + rreq_timeout`
+	* save the id of pending RREQ
+	* `net_pending(i).retransmit = [net_pending(i).retransmit 0]`
+	 
+
 
 #### recv_net
 
@@ -332,3 +419,23 @@ And then checkout this node's MAC queue ->
 #### recv_app
 
 ![](../gliffy/sim1-recv_app.png)
+
+* Check `event.app.type`
+	* case `crosslayer_searching`
+		* Record `traffic_id`, `topo_id`, `end_time`, `hop_count`, `requesting node`, `requesting key`
+	* case `dht_searching`
+		* `tempi = find(event.app.route == event.node)`
+		* if `isempty(tempi)` or `length(tempi)>1`
+			* receives a wrong DHT searching request 
+			* return 
+		* `tempi == length(event.app.route)`
+			* Schedule event `send_net` in `t + SIFS + ack_tx_time + 2*eps`
+			* `newevent.net.dst = newevent.app.route(1)`
+		* if tempi == 1
+			* requester just received the answer from the destination
+			* Record `traffic_id`, `topo_id`, `start_time`, `start_hop_count(=0)`, `requesting node`, `requesting key`, `overlay route length`
+		* if not matching any
+			* Schedule event `send_net in t + SIFS + ack_tx_time + 2*eps`
+			* Make sure the previous ACK at MAC layer is finish
+    		*  `newevent.net.dst = event.app.route(tempi + 1)`
+* End
