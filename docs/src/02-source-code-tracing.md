@@ -2,6 +2,8 @@
 
 ### Workflow - sim1.m
 
+Target: simulation for ***different network sizes***.
+
 We'll have a closely look on the main program flow here, and then move to event part to have advanced appearence.
 
 ![](../gliffy/sim1.png)
@@ -21,6 +23,8 @@ We'll have a closely look on the main program flow here, and then move to event 
 
 ### Workflow - sim2.m
 
-The difference between `sim1.m` and `sim2.m` is the `position_init.m`. 
+Target: simulation for ***Mobility***. 
+
+sim2.m is the `one-time` version of sim1.m
 
 ![](../gliffy/sim2.png)
