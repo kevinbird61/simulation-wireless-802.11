@@ -20,3 +20,5 @@ Obviously, the work can be divided into several part:
 * Written by [`Kevin Cyu`](https://github.com/kevinbird61)
     * `Nuntanut Bhooanusas`
     * `JingZhao Zhuo`
+
+![](img/ncku.png)
