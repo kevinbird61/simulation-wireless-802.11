@@ -21,4 +21,4 @@ Obviously, the work can be divided into several part:
     * `Nuntanut Bhooanusas`
     * `JingZhao Zhuo`
 
-![](img/ncku.png)
+![](img/ncku.jpg)
