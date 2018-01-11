@@ -6,6 +6,8 @@ Edit: `Kevin Cyu`
 
 ### Random waypoint model
 
+![](img/random-waypoint.png)
+
 Random model for the movement of mobile users, and how their `location`, `velocity` and `acceleration` **change** over time.
 
 So this part is going to simulate the status of movement of the mobile user randomly!
@@ -24,3 +26,6 @@ In each simulation routine (i.e. tick), will let each node choose randomly on `d
 * Have two variation:
     * random walk model
     * random direction model
+
+
+![](img/waypoint-walk.jpg)

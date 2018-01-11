@@ -21,6 +21,8 @@ This part introduce `3 model` on power delivery:
 * This equation represent an `sphere`, where transmitter is in the `center`, and the `radius` is `d`
     * `4 p d^2` is the area which the power delivery by transmitter can reach.
 
+![](img/friis-free-space.png)
+
 #### Path Loss Theorem
 
 * When distance of propagation increase, the radiated `energy` will decrease, so called `path loss`
@@ -36,9 +38,17 @@ P' = P - 20*log(d'/d)
 * Not only calculate the transmission of node to node, also consider the `reflection` of from the earth.
 * In this model, the result in `short-distance` is worse because the **oscillation combination from constructive and destructive ray**.
 
+![](img/two-ray.png)
+
 ### Lognormal shadowing model
 
 * The above 2 model are all in the ideal case in `cycle`.
 * Practically, received power will be an `random variable` which based on `multi-path propagation` in the specific distance, a.k.a `fading effects`
     * Need to consider: `path loss model`, `variation of received power(in specific distance)`
 * `shadowing model` extends the ideal circle model to a sophisticated model, a more realistic model.
+
+![](img/multipath_propagation.png)
+* Multipath propagation.
+
+
+In this simulation code, author using the ***`distance`*** to decide which model to use!
