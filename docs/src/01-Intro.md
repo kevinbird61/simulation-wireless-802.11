@@ -17,8 +17,8 @@ Obviously, the work can be divided into several part:
 ## Note
 
 * This project is used for NCKU network simulation course, use for education only.
-* Written by [`Kevin Cyu`](https://github.com/kevinbird61)
-    * `Nuntanut Bhooanusas`
-    * `JingZhao Zhuo`
+* Written by [`Kevin Cyu ( 瞿旭民 )`](https://github.com/kevinbird61)
+    * `Nuntanut Bhooanusas ( 符傳傑 )`
+    * `JingZhao Zhuo ( 卓景昭 )` 
 
 ![](img/ncku.jpg)
